@@ -357,7 +357,7 @@ public class NagaService {
         Map<String, String> map = getProfit(session);
         positionsClosedDto.setProfit(Double.parseDouble(map.get("profit")));
         positionsClosedDto.setCount(Integer.parseInt(map.get("count")));
-        positionsClosedDto.setTerminalId(Long.getLong(session.getTerminalId()));
+        positionsClosedDto.setTerminalId(session.getTerminalId());
         positionsClosedDto.setCustomName(session.getCustomName());
 
         return positionsClosedDto;
