@@ -152,7 +152,7 @@ public class NagaService {
      * @param price
      * @param lots
      */
-    public void createPostition(NagaSession session, String symbol, double price, double lots, double takeProfit, double stopLoss, Signal signal) {
+    public void createPostition(NagaSession session, String symbol, double price, double lots, double takeProfit, double stopLoss, boolean isLong) {
         try {
             String body = Json.createObjectBuilder()
                     .add("duration", 60)
@@ -162,7 +162,7 @@ public class NagaService {
                     .add("sl", stopLoss)
                     .add("tp", takeProfit)
                     .add("symbol", symbol)
-                    .add("type", signal.name())
+                    .add("type", isLong ? "BUY":"SELL")
                     .build().toString();
 
             HttpRequest request = baseRequest("/broker/trade/create", session, "1.0.0")

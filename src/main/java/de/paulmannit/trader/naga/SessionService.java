@@ -19,6 +19,9 @@ public class SessionService {
 
     public NagaSession nagaSession = null;
 
+    @ConfigProperty(name = "naga.start", defaultValue = "true")
+    boolean startNaga;
+
     @ConfigProperty(name = "naga.accountName")
     String accountName;
 
@@ -27,22 +30,23 @@ public class SessionService {
 
     @Startup
     public void start() {
-        NagaSession nagaSession = nagaService.login();
-        Log.info("Session Token: " + nagaSession.getToken());
+        if (startNaga) {
+            NagaSession nagaSession = nagaService.login();
+            Log.info("Session Token: " + nagaSession.getToken());
 
-        List<AccountDto> accountDtos = new ArrayList<>();
-        try {
-            accountDtos = nagaService.getLinkedAccounts(nagaSession);
+            List<AccountDto> accountDtos = new ArrayList<>();
+            try {
+                accountDtos = nagaService.getLinkedAccounts(nagaSession);
 
-            AccountDto accountDto = getAccount(accountDtos);
-            if (accountDto == null) {
-                Log.errorf("Account <%s> Type <%s> not found", accountName, isDemo ? "Demo" : "Live");
-                System.exit(-1);
+                AccountDto accountDto = getAccount(accountDtos);
+                if (accountDto == null) {
+                    Log.errorf("Account <%s> Type <%s> not found", accountName, isDemo ? "Demo" : "Live");
+                    System.exit(-1);
+                }
+                this.nagaSession = nagaService.createSession(nagaSession, String.valueOf(accountDto.getTerminalId()));
+            } catch (Exception e) {
+                Log.error(e);
             }
-            this.nagaSession = nagaService.createSession(nagaSession, String.valueOf(accountDto.getTerminalId()));
-        }
-        catch (Exception e) {
-            Log.error(e);
         }
     }
 
