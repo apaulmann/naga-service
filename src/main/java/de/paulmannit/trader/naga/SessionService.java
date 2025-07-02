@@ -43,7 +43,7 @@ public class SessionService {
                     Log.errorf("Account <%s> Type <%s> not found", accountName, isDemo ? "Demo" : "Live");
                     System.exit(-1);
                 }
-                this.nagaSession = nagaService.createSession(nagaSession, String.valueOf(accountDto.getTerminalId()));
+                this.nagaSession = nagaService.createSession(nagaSession, String.valueOf(accountDto.getTerminalId()), accountDto.getCustomName());
             } catch (Exception e) {
                 Log.error(e);
             }

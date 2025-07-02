@@ -13,4 +13,5 @@ public class NagaSession {
     private String token;
     private String xsrf;
     private String terminalId;
+    private String customName;
 }

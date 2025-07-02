@@ -19,5 +19,7 @@ public class PositionsClosedDto implements Serializable {
 
     private double profit;
     private int count;
+    private long terminalId;
+    private String customName;
     private List<PositionClosedDto> positionClosedDtoList;
 }

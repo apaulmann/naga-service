@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -19,5 +20,5 @@ public class HistoriesDataDto implements Serializable {
 
     private String symbol;
 
-    private List<HistoryDataDto> historyDataDtoList;
+    private List<HistoryDataDto> historyDataDtoList = new ArrayList<>();
 }

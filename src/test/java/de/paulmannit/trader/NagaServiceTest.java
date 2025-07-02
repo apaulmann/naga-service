@@ -53,7 +53,7 @@ class NagaServiceTest {
             Log.errorf("Account <%s> Type <%s> not found", accountName, isDemo ? "Demo" : "Live");
         }
         assertNotNull(accountDto);
-        nagaSession = nagaService.createSession(loginSession, String.valueOf(accountDto.getTerminalId()));
+        nagaSession = nagaService.createSession(loginSession, String.valueOf(accountDto.getTerminalId()), accountDto.getCustomName());
 
         assertNotNull(nagaSession);
 

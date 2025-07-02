@@ -18,6 +18,9 @@ public class DynamicDataDto implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    private long terminalId;
+    private String customName;
+
     private double floatingProfit;
     private double marginLevel;
     private double margin;

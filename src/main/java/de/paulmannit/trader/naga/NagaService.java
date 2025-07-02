@@ -79,7 +79,7 @@ public class NagaService {
 
             if (response.statusCode() == 200) {
                 JsonObject info = Json.createReader(new StringReader(response.body())).readObject().getJsonObject("info");
-                return new NagaSession(info.getString("token"), info.getString("xsrf"), null);
+                return new NagaSession(info.getString("token"), info.getString("xsrf"), null, null);
             }
         } catch (Exception e) {
             throw new RuntimeException("Login failed", e);
@@ -123,7 +123,7 @@ public class NagaService {
      * @param terminalId
      * @return
      */
-    public NagaSession createSession(NagaSession session, String terminalId) {
+    public NagaSession createSession(NagaSession session, String terminalId, String customName) {
         try {
             String body = Json.createObjectBuilder()
                     .add("device_uuid", deviceUuid)
@@ -137,7 +137,7 @@ public class NagaService {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
                 JsonObject info = Json.createReader(new StringReader(response.body())).readObject().getJsonObject("info");
-                return new NagaSession(info.getString("token"), info.getString("xsrf"), terminalId);
+                return new NagaSession(info.getString("token"), info.getString("xsrf"), terminalId, customName);
             }
         } catch (Exception e) {
             Log.error("Create session failed", e);
@@ -303,7 +303,9 @@ public class NagaService {
 
             if (response.statusCode() == 200) {
                 JsonObject data = Json.createReader(new StringReader(response.body())).readObject().getJsonObject("data");
-                return DynamicDataDto.fromJson(data);
+                DynamicDataDto dynamicDataDto = DynamicDataDto.fromJson(data);
+                dynamicDataDto.setTerminalId(Long.getLong(session.getTerminalId()));
+                return dynamicDataDto;
             }
         } catch (Exception e) {
             Log.error("Getting dynamic data", e);
@@ -337,7 +339,8 @@ public class NagaService {
      * @param session
      * @return
      */
-    public List<PositionClosedDto> getClosedOrders(NagaSession session) {
+    public PositionsClosedDto getClosedOrders(NagaSession session) {
+        PositionsClosedDto  positionsClosedDto = new PositionsClosedDto();
         List<PositionClosedDto> positions = new ArrayList<>();
         Map<String, String> range = getCurrentMonthRangeUTC();
 
@@ -348,7 +351,16 @@ public class NagaService {
             if (part.size() < 50) break;
             page++;
         }
-        return positions;
+
+        positionsClosedDto.setPositionClosedDtoList(positions);
+
+        Map<String, String> map = getProfit(session);
+        positionsClosedDto.setProfit(Double.parseDouble(map.get("profit")));
+        positionsClosedDto.setCount(Integer.parseInt(map.get("count")));
+        positionsClosedDto.setTerminalId(Long.getLong(session.getTerminalId()));
+        positionsClosedDto.setCustomName(session.getCustomName());
+
+        return positionsClosedDto;
     }
 
     private List<PositionClosedDto> fetchClosedOrders(NagaSession session, int page, String from, String to) {
@@ -410,8 +422,10 @@ public class NagaService {
      * @param session
      * @return
      */
-    public List<HistoryDataDto> getHistory(String symbol, NagaSession session) {
+    public HistoriesDataDto getHistory(String symbol, NagaSession session) {
         try {
+            HistoriesDataDto historiesDataDto = new HistoriesDataDto();
+
             Instant now = Instant.now();
             long from = now.minus(2, ChronoUnit.HOURS).getEpochSecond();
             long to = now.getEpochSecond();
@@ -446,12 +460,15 @@ public class NagaService {
 
                 dtos.sort(Comparator.comparing(HistoryDataDto::getTimeStamp));
                 TechnicalIndicators.calculateMacd(dtos);
-                return dtos;
+
+                historiesDataDto.setHistoryDataDtoList(dtos);
+                historiesDataDto.setSymbol(symbol);
+                return historiesDataDto;
             }
         } catch (Exception e) {
             Log.error("Get history failed", e);
         }
-        return List.of();
+        return new HistoriesDataDto();
     }
 
     private HttpRequest.Builder baseRequest(String path, NagaSession session, String version) {
