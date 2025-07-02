@@ -11,7 +11,7 @@ public class TechnicalIndicators {
         final int shortPeriod = 12;
         final int longPeriod = 26;
         final int signalPeriod = 9;
-        final int ema200Period = 200;
+        final int ema200Period = 60; // 60 is not 200...
 
         List<Double> emaShort = calculateEmaList(data, shortPeriod);
         List<Double> emaLong = calculateEmaList(data, longPeriod);
