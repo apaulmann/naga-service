@@ -27,9 +27,6 @@ class NagaServiceTest {
     @ConfigProperty(name = "naga.passwordHash")
     public String passwordHash;
 
-    @ConfigProperty(name = "naga.passwordHash")
-    public String useAccount;
-
     @ConfigProperty(name = "naga.accountName")
     String accountName;
 
