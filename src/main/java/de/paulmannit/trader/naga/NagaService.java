@@ -304,7 +304,7 @@ public class NagaService {
             if (response.statusCode() == 200) {
                 JsonObject data = Json.createReader(new StringReader(response.body())).readObject().getJsonObject("data");
                 DynamicDataDto dynamicDataDto = DynamicDataDto.fromJson(data);
-                dynamicDataDto.setTerminalId(Long.getLong(session.getTerminalId()));
+                dynamicDataDto.setTerminalId(session.getTerminalId());
                 return dynamicDataDto;
             }
         } catch (Exception e) {
