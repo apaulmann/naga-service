@@ -1,5 +1,6 @@
 package de.paulmannit.trader.dtos;
 
+import de.paulmannit.trader.naga.Helper;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.json.JsonObject;
 import lombok.Getter;
@@ -41,24 +42,24 @@ public class PositionClosedDto implements Serializable {
 
     public static PositionClosedDto fromJson(JsonObject json) {
         PositionClosedDto dto = new PositionClosedDto();
-        dto.setOrderId(json.getJsonNumber("order_id").longValue());
-        dto.setTicket(json.getString("ticket"));
-        dto.setType(json.getString("type"));
-        dto.setGenerated(json.getString("generated"));
-        dto.setProfit(json.getJsonNumber("profit").doubleValue());
-        dto.setTakeProfit(json.getJsonNumber("take_profit").doubleValue());
-        dto.setStopLoss(json.getJsonNumber("stop_loss").doubleValue());
-        dto.setMargin(json.getJsonNumber("margin").doubleValue());
-        dto.setLots(json.getJsonNumber("lots").doubleValue());
-        dto.setOpenPrice(json.getJsonNumber("open_price").doubleValue());
-        dto.setClosePrice(json.getJsonNumber("close_price").doubleValue());
-        dto.setOpenPlatform(json.getString("open_platform"));
-        dto.setSignalUserId(json.getJsonNumber("signal_user_id").longValue());
-        dto.setTerminalId(json.getJsonNumber("terminal_id").longValue());
-        dto.setTerminalCurrency(json.getString("terminal_currency"));
-        dto.setSymbol(json.getString("symbol"));
-        dto.setSymbolName(json.getString("symbol_name"));
-        dto.setBaseSymbol(json.getString("base_symbol"));
+        dto.setOrderId(Helper.getSafeLong(json, "order_id"));
+        dto.setTicket(Helper.getSafeString(json,"ticket"));
+        dto.setType(Helper.getSafeString(json,"type"));
+        dto.setGenerated(Helper.getSafeString(json,"generated"));
+        dto.setProfit(Helper.getSafeDouble(json, "profit"));
+        dto.setTakeProfit(Helper.getSafeDouble(json,"take_profit"));
+        dto.setStopLoss(Helper.getSafeDouble(json,"stop_loss"));
+        dto.setMargin(Helper.getSafeDouble(json,"margin"));
+        dto.setLots(Helper.getSafeDouble(json,"lots"));
+        dto.setOpenPrice(Helper.getSafeDouble(json,"open_price"));
+        dto.setClosePrice(Helper.getSafeDouble(json,"close_price"));
+        dto.setOpenPlatform(Helper.getSafeString(json,"open_platform"));
+        dto.setSignalUserId(Helper.getSafeLong(json,"signal_user_id"));
+        dto.setTerminalId(Helper.getSafeLong(json,"terminal_id"));
+        dto.setTerminalCurrency(Helper.getSafeString(json,"terminal_currency"));
+        dto.setSymbol(Helper.getSafeString(json,"symbol"));
+        dto.setSymbolName(Helper.getSafeString(json,"symbol_name"));
+        dto.setBaseSymbol(Helper.getSafeString(json,"base_symbol"));
         dto.setSymbolDigits(json.getInt("symbol_digits"));
         dto.setCloseTime(Instant.parse(json.getString("close_time")));
 

@@ -1,5 +1,6 @@
 package de.paulmannit.trader.dtos;
 
+import de.paulmannit.trader.naga.Helper;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.json.JsonObject;
 import lombok.Getter;
@@ -30,6 +31,7 @@ public class DynamicDataDto implements Serializable {
     private double credit;
     private String currency;
     private Instant creationDate;
+    private Instant updateTimestamp;
 
     public static DynamicDataDto fromJson(JsonObject json) {
         DynamicDataDto dto = new DynamicDataDto();
@@ -40,8 +42,9 @@ public class DynamicDataDto implements Serializable {
         dto.setEquity(json.getJsonNumber("equity").doubleValue());
         dto.setBalance(json.getJsonNumber("balance").doubleValue());
         dto.setCredit(json.getJsonNumber("credit").doubleValue());
-        dto.setCurrency(json.getString("currency"));
+        dto.setCurrency(Helper.getSafeString(json,"currency"));
         dto.setCreationDate(Instant.parse(json.getString("creation_date")));
+        dto.setUpdateTimestamp(Instant.now());
         return dto;
     }
 }

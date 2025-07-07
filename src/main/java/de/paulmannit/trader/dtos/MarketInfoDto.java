@@ -1,7 +1,9 @@
 package de.paulmannit.trader.dtos;
 
+import de.paulmannit.trader.naga.Helper;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -48,33 +50,43 @@ public class MarketInfoDto implements Serializable {
 
     public static MarketInfoDto fromJson(JsonObject obj) {
         MarketInfoDto dto = new MarketInfoDto();
-        dto.setSymbol(obj.getString("symbol"));
-        dto.setAsk(obj.getJsonNumber("ask").doubleValue());
-        dto.setBid(obj.getJsonNumber("bid").doubleValue());
-        dto.setSpread(obj.getJsonNumber("spread").doubleValue());
-        dto.setMargin(obj.getJsonNumber("margin").doubleValue());
-        dto.setTickValue(obj.getJsonNumber("tick_value").doubleValue());
-        dto.setLotMax(obj.getJsonNumber("lot_max").doubleValue());
-        dto.setLastUpdateDate(Instant.parse(obj.getString("last_update_date")));
-        dto.setCommission(obj.getJsonNumber("commission").doubleValue());
-        dto.setSpreadValue(obj.getJsonNumber("spread_value").doubleValue());
-        dto.setStopLevel(obj.getJsonNumber("stop_level").doubleValue());
-        dto.setPoint(obj.getJsonNumber("point").doubleValue());
-        dto.setDigits(obj.getInt("digits"));
-        dto.setLotSize(obj.getJsonNumber("lot_size").doubleValue());
-        dto.setLotMin(obj.getJsonNumber("lot_min").doubleValue());
-        dto.setLotStep(obj.getJsonNumber("lot_step").doubleValue());
-        dto.setSymbolLotMax(obj.getInt("symbol_lot_max"));
-        dto.setSymbolName(obj.getString("symbol_name"));
-        dto.setFavourite(obj.getBoolean("is_favourite"));
-        dto.setRealStocks(obj.getBoolean("is_real_stocks"));
-        dto.setBuyOnly(obj.getBoolean("is_buy_only"));
-        dto.setAssetType(obj.getString("asset_type"));
-        dto.setSentiment(Sentiment.fromJson(obj.getJsonObject("sentiment")));
-        dto.setMarketOpen(obj.getBoolean("is_market_open"));
-        dto.setNearestMarketOpening(Instant.parse(obj.getString("nearest_market_opening")));
-        dto.setNearestMarketClosing(Instant.parse(obj.getString("nearest_market_closing")));
-        dto.setShowCostWarning(obj.getBoolean("show_cost_warning"));
+
+        dto.setSymbol(Helper.getSafeString(obj, "symbol"));
+        dto.setAsk(Helper.getSafeDouble(obj, "ask"));
+        dto.setBid(Helper.getSafeDouble(obj, "bid"));
+        dto.setSpread(Helper.getSafeDouble(obj, "spread"));
+        dto.setMargin(Helper.getSafeDouble(obj, "margin"));
+        dto.setTickValue(Helper.getSafeDouble(obj, "tick_value"));
+        dto.setLotMax(Helper.getSafeDouble(obj, "lot_max"));
+        dto.setCommission(Helper.getSafeDouble(obj, "commission"));
+        dto.setSpreadValue(Helper.getSafeDouble(obj, "spread_value"));
+        dto.setStopLevel(Helper.getSafeDouble(obj, "stop_level"));
+        dto.setPoint(Helper.getSafeDouble(obj, "point"));
+        dto.setLotSize(Helper.getSafeDouble(obj, "lot_size"));
+        dto.setLotMin(Helper.getSafeDouble(obj, "lot_min"));
+        dto.setLotStep(Helper.getSafeDouble(obj, "lot_step"));
+
+        dto.setDigits(obj.containsKey("digits") ? obj.getInt("digits") : 0);
+        dto.setSymbolLotMax(obj.containsKey("symbol_lot_max") ? obj.getInt("symbol_lot_max") : 0);
+
+        dto.setSymbolName(Helper.getSafeString(obj, "symbol_name"));
+        dto.setAssetType(Helper.getSafeString(obj, "asset_type"));
+
+        dto.setFavourite(Helper.getSafeBoolean(obj, "is_favourite"));
+        dto.setRealStocks(Helper.getSafeBoolean(obj, "is_real_stocks"));
+        dto.setBuyOnly(Helper.getSafeBoolean(obj, "is_buy_only"));
+        dto.setMarketOpen(Helper.getSafeBoolean(obj, "is_market_open"));
+        dto.setShowCostWarning(Helper.getSafeBoolean(obj, "show_cost_warning"));
+
+        dto.setSentiment(obj.containsKey("sentiment") && obj.get("sentiment").getValueType() == JsonValue.ValueType.OBJECT
+                ? Sentiment.fromJson(obj.getJsonObject("sentiment"))
+                : null);
+
+        dto.setLastUpdateDate(Helper.parseInstant(obj, "last_update_date"));
+        dto.setNearestMarketOpening(Helper.parseInstant(obj, "nearest_market_opening"));
+        dto.setNearestMarketClosing(Helper.parseInstant(obj, "nearest_market_closing"));
+
         return dto;
     }
+
 }
