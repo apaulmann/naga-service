@@ -305,7 +305,6 @@ public class NagaService {
                 JsonObject data = Json.createReader(new StringReader(response.body())).readObject().getJsonObject("data");
                 DynamicDataDto dynamicDataDto = DynamicDataDto.fromJson(data);
                 dynamicDataDto.setTerminalId(session.getTerminalId());
-                Log.info("***" + io.vertx.core.json.Json.encode(dynamicDataDto));
                 return dynamicDataDto;
             }
         } catch (Exception e) {
@@ -404,8 +403,14 @@ public class NagaService {
                 if (data.containsKey("total_profit")) {
                     result.put("profit", data.getJsonNumber("total_profit").toString());
                 }
+                else {
+                    result.put("profit", "0");
+                }
                 if (data.containsKey("order_count")) {
                     result.put("count", data.getJsonNumber("order_count").toString());
+                }
+                else {
+                    result.put("count", "0");
                 }
                 return result;
             }
