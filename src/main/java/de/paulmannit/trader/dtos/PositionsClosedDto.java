@@ -18,6 +18,7 @@ public class PositionsClosedDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private double profit;
+    private double balance;
     private int count;
     private String terminalId;
     private String customName;

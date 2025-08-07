@@ -360,6 +360,14 @@ public class NagaService {
         positionsClosedDto.setTerminalId(session.getTerminalId());
         positionsClosedDto.setCustomName(session.getCustomName());
 
+        // Total balance
+        DynamicDataDto dynamicDataDto = getDynamicData(session);
+        if (dynamicDataDto != null) {
+            positionsClosedDto.setBalance(dynamicDataDto.getBalance());
+        } else {
+            Log.warn("Dynamic data is null for terminal: " + session.getTerminalId());
+        }
+
         return positionsClosedDto;
     }
 
